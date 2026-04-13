@@ -1,0 +1,26 @@
+# AI Agent Team System - Dependencies
+# LLM
+google-genai>=1.0.0
+openai>=1.0.0
+httpx>=0.27.0
+
+# Web Dashboard
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+websockets>=13.0
+jinja2>=3.1.0
+
+# Database
+sqlalchemy>=2.0.0
+aiosqlite>=0.20.0
+
+# Git
+gitpython>=3.1.0
+
+# Utilities
+python-dotenv>=1.0.0
+rich>=13.0.0
+pydantic>=2.0.0
+
+# Async
+aiofiles>=24.0.0

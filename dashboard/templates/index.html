@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Team — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">🤖</span>
+                    <span class="logo-text">Agent Team</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title">Projects</h3>
+                <div id="project-list" class="project-list">
+                    <div class="empty-state">No projects yet</div>
+                </div>
+            </div>
+
+            <button id="btn-new-project" class="btn btn-primary btn-block">
+                <span>+</span> New Project
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome screen (shown when no project selected) -->
+            <div id="welcome-screen" class="welcome-screen">
+                <div class="welcome-inner">
+                    <div class="welcome-icon">🤖</div>
+                    <h1>AI Agent Team</h1>
+                    <p>Create a new project to get started. Your AI team will analyze, plan, and build it for you.</p>
+                    <button class="btn btn-primary btn-lg" onclick="showNewProjectModal()">
+                        Create Your First Project
+                    </button>
+                </div>
+            </div>
+
+            <!-- Project Detail (hidden initially) -->
+            <div id="project-detail" class="project-detail" style="display:none">
+                <!-- Header -->
+                <div class="detail-header">
+                    <div class="detail-header-left">
+                        <h1 id="project-title">Project Title</h1>
+                        <div class="detail-meta">
+                            <span id="project-status" class="badge badge-pending">PENDING</span>
+                            <span id="project-phase" class="phase-label">Phase: Init</span>
+                        </div>
+                    </div>
+                    <div class="detail-header-right">
+                        <button id="btn-retry-project" class="btn btn-retry" style="display:none"
+                                onclick="retryProject()">
+                            <span>🔄</span> Retry Project
+                        </button>
+                        <div id="progress-container" class="progress-container">
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill" style="width:0%"></div>
+                            </div>
+                            <span id="progress-text" class="progress-text">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid Layout -->
+                <div class="detail-grid">
+                    <!-- Agent Tree Panel -->
+                    <div class="panel panel-agents">
+                        <div class="panel-header">
+                            <h2>Agent Team</h2>
+                        </div>
+                        <div id="agent-tree" class="agent-tree">
+                            <div class="empty-state">Agents will appear here...</div>
+                        </div>
+                    </div>
+
+                    <!-- Task Flow Panel -->
+                    <div class="panel panel-tasks">
+                        <div class="panel-header">
+                            <h2>Task Flow</h2>
+                            <div class="task-stats">
+                                <span id="stat-completed" class="stat">0 ✅</span>
+                                <span id="stat-active" class="stat">0 🔧</span>
+                                <span id="stat-pending" class="stat">0 ⏳</span>
+                            </div>
+                        </div>
+                        <div id="task-flow" class="task-flow">
+                            <div class="empty-state">Tasks will appear here...</div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Log Panel -->
+                    <div class="panel panel-logs">
+                        <div class="panel-header">
+                            <h2>Live Activity</h2>
+                            <div id="live-indicator" class="live-indicator">
+                                <span class="live-dot"></span> LIVE
+                            </div>
+                        </div>
+                        <div id="activity-log" class="activity-log">
+                            <div class="empty-state">Activity will stream here...</div>
+                        </div>
+                    </div>
+
+                    <!-- Agent Communication Panel -->
+                    <div class="panel panel-messages">
+                        <div class="panel-header">
+                            <h2>Agent Communication</h2>
+                        </div>
+                        <div id="message-log" class="message-log">
+                            <div class="empty-state">Messages will appear here...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Detail Drawer (shown when clicking an agent) -->
+                <div id="agent-drawer" class="agent-drawer" style="display:none">
+                    <div class="drawer-header">
+                        <h2 id="drawer-agent-name">Agent Name</h2>
+                        <button class="btn-close" onclick="closeAgentDrawer()">✕</button>
+                    </div>
+                    <div class="drawer-meta">
+                        <span id="drawer-agent-type" class="badge">Type</span>
+                        <span id="drawer-agent-status" class="badge">Status</span>
+                    </div>
+                    <h3>Activity Timeline</h3>
+                    <div id="drawer-timeline" class="drawer-timeline">
+                        <div class="empty-state">No activity yet</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Project Modal -->
+    <div id="modal-new-project" class="modal" style="display:none">
+        <div class="modal-overlay" onclick="hideNewProjectModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🚀 New Project</h2>
+                <button class="btn-close" onclick="hideNewProjectModal()">✕</button>
+            </div>
+            <form id="form-new-project" onsubmit="createProject(event)">
+                <div class="form-group">
+                    <label for="input-title">Project Title</label>
+                    <input type="text" id="input-title" placeholder="e.g. Inventory Management System"
+                           required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="input-description">Description</label>
+                    <textarea id="input-description" rows="6"
+                              placeholder="Describe what you want to build. Be as detailed as possible — the AI team will use this to create specifications and plan the development."
+                              required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="input-target-path">Target Path <span class="optional">(optional)</span></label>
+                    <input type="text" id="input-target-path"
+                           placeholder="e.g. C:\laragon8\www\my-project (leave empty for new project)">
+                    <span class="form-hint">Path to an existing codebase, or leave empty to create a new project.</span>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideNewProjectModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span>🤖</span> Start Agent Team
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/js/websocket.js"></script>
+    <script src="/static/js/agent_tree.js"></script>
+    <script src="/static/js/task_flow.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
