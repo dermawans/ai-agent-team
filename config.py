@@ -28,6 +28,10 @@ class LLMConfig:
     OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5-coder:14b")
 
+    # Anthropic
+    ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+    ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+
     # Rate limiting
     MAX_RPM = int(os.getenv("LLM_MAX_RPM", "14"))  # Requests per minute (Gemini free = 15)
     MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "3"))

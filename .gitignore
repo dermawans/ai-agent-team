@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+*.ps
+*.ps1
+
 # Environments
 .env
 .venv

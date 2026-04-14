@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.1] - 2026-04-15
+
+### Added
+- **Anthropic (Claude) Support** — Integrated the Anthropic Messages API. Users can now use Claude 3.5 Sonnet or other Claude models as their primary AI provider.
+- **Enhanced Token Tracking** — Standardized token usage reporting for Anthropic responses.
+
+---
+
 ## [1.1.0] - 2026-04-13
 
 ### Added

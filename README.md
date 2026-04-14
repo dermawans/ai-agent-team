@@ -4,7 +4,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![LLM](https://img.shields.io/badge/LLM-Gemini%20|%20OpenAI%20|%20Ollama-orange)
+![LLM](https://img.shields.io/badge/LLM-Gemini%20|%20Anthropic%20|%20OpenAI%20|%20Ollama-orange)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
 A custom-built **Multi-Agent AI orchestrator** that works like a virtual software development team. Give it a project description, and it will assemble a team of specialized AI agents to plan, build, and test your code — all observable through a real-time web dashboard.
@@ -46,7 +46,7 @@ A custom-built **Multi-Agent AI orchestrator** that works like a virtual softwar
 | **Real File Output** | Agents generate complete, production-ready code files directly to disk |
 | **Project Documentation** | Auto-generates `SPEC.md`, `TASK_PLAN.md`, and `BUILD_SUMMARY.md` in project folder |
 | **Resume & Retry** | Failed projects can be resumed from the last checkpoint via dashboard |
-| **Configurable LLM** | Supports Gemini (free), OpenAI, and Ollama (local) — swap anytime |
+| **Configurable LLM** | Supports Gemini (free), Anthropic (Claude), OpenAI, and Ollama (local) — swap anytime |
 | **Git Integration** | Auto branching, commits per task, optional GitHub repo creation |
 | **Code Safety** | Sandboxed file operations, allowlisted shell commands, path validation |
 | **Semi-Auto Mode** | Agents work freely, you review the results before merging |
@@ -91,7 +91,7 @@ A custom-built **Multi-Agent AI orchestrator** that works like a virtual softwar
 
 - **Python 3.10+** (tested with 3.12)
 - **Git** installed and in PATH
-- **Gemini API Key** (free from Google AI Studio) / You can use other AI Provider
+- **Gemini API Key** (free from Google AI Studio) OR **Anthropic API Key** (Claude)
 - *Optional:* GitHub CLI (`gh`) for auto repo creation
 - *Optional:* Ollama for local LLM
 
@@ -144,6 +144,10 @@ LLM_PROVIDER=gemini
 # Gemini (default, free tier)
 GEMINI_API_KEY=your_key_here
 GEMINI_MODEL=gemini-2.5-flash
+
+# Anthropic (optional)
+ANTHROPIC_API_KEY=your_key_here
+ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
 
 # OpenAI (optional)
 OPENAI_API_KEY=your_key_here

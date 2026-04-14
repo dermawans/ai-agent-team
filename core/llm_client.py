@@ -75,6 +75,8 @@ class LLMClient:
             return config.LLM.OPENAI_MODEL
         elif self.provider == "ollama":
             return config.LLM.OLLAMA_MODEL
+        elif self.provider == "anthropic":
+            return config.LLM.ANTHROPIC_MODEL
         return "gemini-2.0-flash"
 
     async def _init_gemini(self):
@@ -95,6 +97,11 @@ class LLMClient:
             api_key="ollama"  # Ollama doesn't need a real key
         )
 
+    async def _init_anthropic(self):
+        """Initialize Anthropic client."""
+        from anthropic import AsyncAnthropic
+        self._client = AsyncAnthropic(api_key=config.LLM.ANTHROPIC_API_KEY)
+
     async def _ensure_client(self):
         """Lazy-initialize the LLM client."""
         if self._client is None:
@@ -104,6 +111,8 @@ class LLMClient:
                 await self._init_openai()
             elif self.provider == "ollama":
                 await self._init_ollama()
+            elif self.provider == "anthropic":
+                await self._init_anthropic()
             else:
                 raise ValueError(f"Unknown LLM provider: {self.provider}")
 
@@ -137,6 +146,8 @@ class LLMClient:
             try:
                 if self.provider == "gemini":
                     return await self._chat_gemini(system_prompt, messages, tools, temperature, max_tokens)
+                elif self.provider == "anthropic":
+                    return await self._chat_anthropic(system_prompt, messages, tools, temperature, max_tokens)
                 else:
                     return await self._chat_openai_compatible(system_prompt, messages, tools, temperature, max_tokens)
             except Exception as e:
@@ -247,6 +258,51 @@ class LLMClient:
             output_tokens=output_tokens,
             model=self.model,
             provider="gemini"
+        )
+
+    async def _chat_anthropic(self, system_prompt, messages, tools, temperature, max_tokens) -> LLMResponse:
+        """Chat using Anthropic API."""
+        # Build messages for Anthropic (role must be user/assistant)
+        anthropic_messages = []
+        for msg in messages:
+            role = "user" if msg["role"] == "user" else "assistant"
+            anthropic_messages.append({"role": role, "content": msg["content"]})
+
+        kwargs = {
+            "model": self.model,
+            "system": system_prompt,
+            "messages": anthropic_messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+
+        # Handling tools would require a separate tool conversion for Anthropic
+        # For now, focus on standard chat support
+        if tools:
+            logger.info("Tools provided but not yet supported for Anthropic in this client version.")
+
+        response = await self._client.messages.create(**kwargs)
+        
+        content = ""
+        if response.content:
+            for block in response.content:
+                if block.type == "text":
+                    content += block.text
+        
+        input_tokens = response.usage.input_tokens if hasattr(response, "usage") else 0
+        output_tokens = response.usage.output_tokens if hasattr(response, "usage") else 0
+
+        self._total_tokens += input_tokens + output_tokens
+        self._total_calls += 1
+
+        logger.debug(f"Anthropic response: {len(content)} chars, {input_tokens}+{output_tokens} tokens")
+
+        return LLMResponse(
+            content=content,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            model=self.model,
+            provider="anthropic"
         )
 
     async def _chat_openai_compatible(self, system_prompt, messages, tools, temperature, max_tokens) -> LLMResponse:
